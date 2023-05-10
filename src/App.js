@@ -4,20 +4,14 @@ import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from './consts.js';
 
 
 function App() {
-  const [num, setNum] = useState(0);
   return (
-    <div className="App">
+    <div className="App bg-slate-900">
       <header className="App-header">
         <h1>React Coding Exercise</h1>
       </header>
-      <section className="App-section">
-        <div>
-          Value:
-          {num}
-          <button>+</button>
-          <button>-</button>
-        </div>
-      </section>
+      <div className="flex py-10">
+
+      </div>
     </div>
   );
 }
