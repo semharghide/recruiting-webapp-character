@@ -166,7 +166,8 @@ const Skills = ({ getAttributeModifier }) => {
     return obj;
   };
   const [skillPoints, setSkillPoints] = useState({ ...getDefault() });
-  const pointsAvailable = 10 + 4 * getAttributeModifier("Intelligence");
+  let pointsAvailable = 10 + 4 * getAttributeModifier("Intelligence");
+  if (pointsAvailable < 0) pointsAvailable = 0;
 
   const spendPoints = (skill, pointToSpend) => {
     let existingSkillPoints = 0;
@@ -189,12 +190,22 @@ const Skills = ({ getAttributeModifier }) => {
     });
   };
 
+  const getSkillTotalValue = (skill) => {
+    const spentAndModifier = skillPoints[skill.name] + getAttributeModifier(skill.attributeModifier)
+    if (spentAndModifier < 0) {
+      return 0
+    }
+    return spentAndModifier
+  };
+
   return (
     <Table>
       <Table.Head>
         <Table.HeadCell>Skill</Table.HeadCell>
         <Table.HeadCell>Points spent</Table.HeadCell>
         <Table.HeadCell>Add/Subtract</Table.HeadCell>
+        <Table.HeadCell>Modifier</Table.HeadCell>
+        <Table.HeadCell>Total</Table.HeadCell>
       </Table.Head>
       <Table.Body>
         <Table.Row>
@@ -212,6 +223,12 @@ const Skills = ({ getAttributeModifier }) => {
               <Table.Cell className="flex">
                 <Button onClick={() => spendPoints(skill.name, 1)}>+</Button>
                 <Button onClick={() => spendPoints(skill.name, -1)}>-</Button>
+              </Table.Cell>
+              <Table.Cell>{`${skill.attributeModifier} ${getAttributeModifier(
+                skill.attributeModifier
+              )}`}</Table.Cell>
+              <Table.Cell>
+                {getSkillTotalValue(skill)}
               </Table.Cell>
             </Table.Row>
           );
