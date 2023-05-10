@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useState } from "react";
 import { Table, Modal, Button } from "flowbite-react";
 
-import './App.css';
-import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from './consts.js';
-
+import "./App.css";
+import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from "./consts.js";
 
 function App() {
   const [attributeScores, setAttributeScores] = useState({
@@ -31,6 +30,7 @@ function App() {
           getAttributeModifier={getAttributeModifier}
         />
         <Classes attributeScores={attributeScores} />
+        <Skills getAttributeModifier={getAttributeModifier} />
       </div>
     </div>
   );
@@ -41,7 +41,6 @@ const AttributeScores = ({
   setAttributeScores,
   getAttributeModifier,
 }) => {
-
   const spendPoints = (attribute, points) => {
     setAttributeScores({
       ...attributeScores,
@@ -57,7 +56,6 @@ const AttributeScores = ({
           <Table.HeadCell>Score</Table.HeadCell>
           <Table.HeadCell>Add/Subtract</Table.HeadCell>
           <Table.HeadCell>Ability Modifier</Table.HeadCell>
-
         </Table.Head>
 
         <Table.Body className="divide-y">
@@ -76,7 +74,6 @@ const AttributeScores = ({
                   <Button onClick={() => spendPoints(attribute, -1)}>-</Button>
                 </Table.Cell>
                 <Table.Cell>{getAttributeModifier(attribute)}</Table.Cell>
-
               </Table.Row>
             );
           })}
@@ -89,27 +86,30 @@ const AttributeScores = ({
 const Classes = ({ attributeScores }) => {
   return (
     <div className="pr-5">
-    <Table>
-      <Table.Head>
-        <Table.HeadCell>Class</Table.HeadCell>
-        <Table.HeadCell>Requirements met</Table.HeadCell>
-        <Table.HeadCell>
-          <span className="sr-only">Show</span>
-        </Table.HeadCell>
-      </Table.Head>
+      <Table>
+        <Table.Head>
+          <Table.HeadCell>Class</Table.HeadCell>
+          <Table.HeadCell>Requirements met</Table.HeadCell>
+          <Table.HeadCell>
+            <span className="sr-only">Show</span>
+          </Table.HeadCell>
+        </Table.Head>
 
-      <Table.Body className="divide-y">
-        <ClassItem
-          classFieldName={"Barbarian"}
-          attributeScores={attributeScores}
-        />
-        <ClassItem
-          classFieldName={"Wizard"}
-          attributeScores={attributeScores}
-        />
-        <ClassItem classFieldName={"Bard"} attributeScores={attributeScores} />
-      </Table.Body>
-    </Table>
+        <Table.Body className="divide-y">
+          <ClassItem
+            classFieldName={"Barbarian"}
+            attributeScores={attributeScores}
+          />
+          <ClassItem
+            classFieldName={"Wizard"}
+            attributeScores={attributeScores}
+          />
+          <ClassItem
+            classFieldName={"Bard"}
+            attributeScores={attributeScores}
+          />
+        </Table.Body>
+      </Table>
     </div>
   );
 };
@@ -153,6 +153,71 @@ const ClassItem = ({ classFieldName, attributeScores }) => {
         </Modal>
       </Table.Cell>
     </Table.Row>
+  );
+};
+
+const Skills = ({ getAttributeModifier }) => {
+  const getDefault = () => {
+    const obj = {};
+    for (const item of SKILL_LIST) {
+      obj[item.name] = 0;
+    }
+
+    return obj;
+  };
+  const [skillPoints, setSkillPoints] = useState({ ...getDefault() });
+  const pointsAvailable = 10 + 4 * getAttributeModifier("Intelligence");
+
+  const spendPoints = (skill, pointToSpend) => {
+    let existingSkillPoints = 0;
+    for (const property in skillPoints) {
+      existingSkillPoints += skillPoints[property];
+    }
+
+    if (pointToSpend > 0 && pointsAvailable === existingSkillPoints) {
+      alert("REACHED MAXIMUN POINTS");
+      return null;
+    }
+
+    if (pointToSpend < 0 && existingSkillPoints === 0) {
+      alert("REACHED MINIMUM POINTS");
+      return null;
+    }
+    setSkillPoints({
+      ...skillPoints,
+      [skill]: skillPoints[skill] + pointToSpend,
+    });
+  };
+
+  return (
+    <Table>
+      <Table.Head>
+        <Table.HeadCell>Skill</Table.HeadCell>
+        <Table.HeadCell>Points spent</Table.HeadCell>
+        <Table.HeadCell>Add/Subtract</Table.HeadCell>
+      </Table.Head>
+      <Table.Body>
+        <Table.Row>
+          <Table.Cell className="text-xl font-medium text-white">
+            Total points available {pointsAvailable}
+          </Table.Cell>
+        </Table.Row>
+        {SKILL_LIST.map((skill) => {
+          return (
+            <Table.Row key={skill.name} className="border-gray-700 bg-gray-800">
+              <Table.Cell className="whitespace-nowrap font-medium text-white">
+                {skill.name}
+              </Table.Cell>
+              <Table.Cell>{skillPoints[skill.name]}</Table.Cell>
+              <Table.Cell className="flex">
+                <Button onClick={() => spendPoints(skill.name, 1)}>+</Button>
+                <Button onClick={() => spendPoints(skill.name, -1)}>-</Button>
+              </Table.Cell>
+            </Table.Row>
+          );
+        })}
+      </Table.Body>
+    </Table>
   );
 };
 
