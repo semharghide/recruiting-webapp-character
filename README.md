@@ -1,4 +1,46 @@
 # recruiting-webapp-character
+Hello there :wave: And nice to meet you. I think DnD is really cool, so this was a fun exercise to write up:)
+
+## Steps followed
+### Overview
+I added tailwind and flowbite-react to the project. Flowbite is a react component library for Tailwind CSS that
+I've been working lately that allows me to scaffold a UI for smaller projects quickly. Apart from that I've
+added no other dependencies.
+
+After reading the requirements and sketching out the project, I've limited myself to roughly 2 hours after running the app,
+with the exception of writing this readMe.
+
+Instructions are completed up to and including the 7th step.
+
+Thanks and looking forward to chatting about this.
+
+### Steps 1 - 4: Attribute Scores and Class List
+- Scores can be added/subtracted to attributes
+- List of Classes displays `No` if class requirements aren't met, and `Yes` otherwise
+- Display of minimum requirements for given class
+- Calculate/Display ability modifier
+
+![1-4](https://github.com/semharghide/recruiting-webapp-character/assets/32877734/a8ec6dbc-5ae4-4255-8a08-728d404de0d7)
+
+### Steps 5: Skill List
+- Minimum and Maximum constraints for spending skill points
+- Calculate/Display of total skill points
+
+![5](https://github.com/semharghide/recruiting-webapp-character/assets/32877734/9094d5a8-c9e5-4f98-a4b1-3447671cb46c)
+
+### Steps 6: Save/Get character
+- Save character 
+- Get last character and populate state with response
+
+![6](https://github.com/semharghide/recruiting-webapp-character/assets/32877734/bc718e69-4d44-46ea-94a1-c0190deff68c)
+
+### Steps 7: Maximum attribute scores
+- Cannot add more than 70 points
+
+![7](https://github.com/semharghide/recruiting-webapp-character/assets/32877734/9c75c8eb-66ec-4019-8137-adf91ae45c0d)
+
+
+# recruiting-webapp-character
 React coding test
 
 # Create a repository from this template
