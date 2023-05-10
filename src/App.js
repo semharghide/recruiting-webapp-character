@@ -24,17 +24,19 @@ function App() {
           attributeScores={attributeScores}
           setAttributeScores={setAttributeScores}
         />
+        <Classes attributeScores={attributeScores} />
       </div>
     </div>
   );
 }
 
-export const AttributeScores = ({
+const AttributeScores = ({
   attributeScores,
   setAttributeScores,
   getAttributeModifier,
 }) => {
-  const spendPoints = (attribute, points) => {
+
+  const spendPoints = async (attribute, points) => {
     setAttributeScores({
       ...attributeScores,
       [attribute]: attributeScores[attribute] + points,
@@ -71,6 +73,51 @@ export const AttributeScores = ({
         </Table.Body>
       </Table>
     </div>
+  );
+};
+
+const Classes = ({ attributeScores }) => {
+  return (
+    <div className="pr-5">
+    <Table>
+      <Table.Head>
+        <Table.HeadCell>Class</Table.HeadCell>
+        <Table.HeadCell>Requirements met</Table.HeadCell>
+      </Table.Head>
+
+      <Table.Body className="divide-y">
+        <ClassItem
+          classFieldName={"Barbarian"}
+          attributeScores={attributeScores}
+        />
+        <ClassItem
+          classFieldName={"Wizard"}
+          attributeScores={attributeScores}
+        />
+        <ClassItem classFieldName={"Bard"} attributeScores={attributeScores} />
+      </Table.Body>
+    </Table>
+    </div>
+  );
+};
+
+const ClassItem = ({ classFieldName, attributeScores }) => {
+  const attributeRequirementsMet = (forClassName) => {
+    for (const attribute in CLASS_LIST[forClassName]) {
+      if (attributeScores[attribute] < CLASS_LIST[forClassName][attribute])
+        return false;
+    }
+    return true;
+  };
+  return (
+    <Table.Row className="border-gray-700 bg-gray-800">
+      <Table.Cell className="whitespace-nowrap font-medium text-white">
+        {classFieldName}
+      </Table.Cell>
+      <Table.Cell>
+        {attributeRequirementsMet(classFieldName) ? "Yes" : "No"}
+      </Table.Cell>
+    </Table.Row>
   );
 };
 
