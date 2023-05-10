@@ -14,6 +14,11 @@ function App() {
     Wisdom: 0,
     Charisma: 0,
   });
+
+  const getAttributeModifier = (attribute) => {
+    return Math.floor((attributeScores[attribute] - 10) / 2);
+  };
+
   return (
     <div className="App bg-slate-900">
       <header className="App-header">
@@ -23,6 +28,7 @@ function App() {
         <AttributeScores
           attributeScores={attributeScores}
           setAttributeScores={setAttributeScores}
+          getAttributeModifier={getAttributeModifier}
         />
         <Classes attributeScores={attributeScores} />
       </div>
@@ -33,6 +39,7 @@ function App() {
 const AttributeScores = ({
   attributeScores,
   setAttributeScores,
+  getAttributeModifier,
 }) => {
 
   const spendPoints = (attribute, points) => {
@@ -49,6 +56,8 @@ const AttributeScores = ({
           <Table.HeadCell>Attribute</Table.HeadCell>
           <Table.HeadCell>Score</Table.HeadCell>
           <Table.HeadCell>Add/Subtract</Table.HeadCell>
+          <Table.HeadCell>Ability Modifier</Table.HeadCell>
+
         </Table.Head>
 
         <Table.Body className="divide-y">
@@ -66,6 +75,8 @@ const AttributeScores = ({
                   <Button onClick={() => spendPoints(attribute, 1)}>+</Button>
                   <Button onClick={() => spendPoints(attribute, -1)}>-</Button>
                 </Table.Cell>
+                <Table.Cell>{getAttributeModifier(attribute)}</Table.Cell>
+
               </Table.Row>
             );
           })}
