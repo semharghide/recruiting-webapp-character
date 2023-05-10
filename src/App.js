@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Table, Button } from "flowbite-react";
+import { Table, Modal, Button } from "flowbite-react";
 
 import './App.css';
 import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from './consts.js';
@@ -33,7 +33,6 @@ function App() {
 const AttributeScores = ({
   attributeScores,
   setAttributeScores,
-  getAttributeModifier,
 }) => {
 
   const spendPoints = (attribute, points) => {
@@ -83,6 +82,9 @@ const Classes = ({ attributeScores }) => {
       <Table.Head>
         <Table.HeadCell>Class</Table.HeadCell>
         <Table.HeadCell>Requirements met</Table.HeadCell>
+        <Table.HeadCell>
+          <span className="sr-only">Show</span>
+        </Table.HeadCell>
       </Table.Head>
 
       <Table.Body className="divide-y">
@@ -102,12 +104,21 @@ const Classes = ({ attributeScores }) => {
 };
 
 const ClassItem = ({ classFieldName, attributeScores }) => {
+  const [showRequirements, setShowRequirements] = useState(false);
   const attributeRequirementsMet = (forClassName) => {
     for (const attribute in CLASS_LIST[forClassName]) {
       if (attributeScores[attribute] < CLASS_LIST[forClassName][attribute])
         return false;
     }
     return true;
+  };
+
+  const getRequirementsText = (forClassName) => {
+    let requirements = "";
+    for (const attribute in CLASS_LIST[forClassName]) {
+      requirements += `${attribute} : ${CLASS_LIST[forClassName][attribute]} \n`;
+    }
+    return requirements;
   };
   return (
     <Table.Row className="border-gray-700 bg-gray-800">
@@ -116,6 +127,19 @@ const ClassItem = ({ classFieldName, attributeScores }) => {
       </Table.Cell>
       <Table.Cell>
         {attributeRequirementsMet(classFieldName) ? "Yes" : "No"}
+      </Table.Cell>
+      <Table.Cell>
+        <Button onClick={() => setShowRequirements(true)}>Show</Button>
+        <Modal
+          show={showRequirements}
+          size="sm"
+          onClose={() => setShowRequirements(false)}
+        >
+          <Modal.Header>{classFieldName + " requirements"}</Modal.Header>
+          <Modal.Body>
+            <p className="text-white">{getRequirementsText(classFieldName)}</p>
+          </Modal.Body>
+        </Modal>
       </Table.Cell>
     </Table.Row>
   );
