@@ -7,12 +7,12 @@ import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from "./consts.js";
 function App() {
   const [characterName, setCharacterName] = useState("");
   const [attributeScores, setAttributeScores] = useState({
-    Strength: 0,
-    Dexterity: 0,
-    Constitution: 0,
-    Intelligence: 0,
-    Wisdom: 0,
-    Charisma: 0,
+    Strength: 10,
+    Dexterity: 10,
+    Constitution: 10,
+    Intelligence: 10,
+    Wisdom: 10,
+    Charisma: 10,
   });
   const getDefaultSkillPoints = () => {
     const obj = {};
@@ -65,11 +65,11 @@ function App() {
       <header className="App-header">
         <h1>React Coding Exercise</h1>
       </header>
+
       <div className="flex pt-10 pb-3">
         <Button onClick={(event) => saveCharacter(event)}>
           Save character
         </Button>
-
         <TextInput
           id="saveCharacter"
           type="text"
@@ -80,12 +80,17 @@ function App() {
           }}
         />
       </div>
+
       <div className="flex">
         <Button onClick={(event) => getCharacter(event)}>Get character</Button>
       </div>
+
       <Card href="#">
-        <h1 className="text-2xl font-bold text-white">{characterName}</h1>
+        <h1 className="text-2xl font-bold text-white">
+          Character Name: {characterName}
+        </h1>
       </Card>
+
       <div className="flex py-10">
         <AttributeScores
           attributeScores={attributeScores}
@@ -108,7 +113,18 @@ const AttributeScores = ({
   setAttributeScores,
   getAttributeModifier,
 }) => {
-  const spendPoints = (attribute, points) => {
+  const MAX_POINTS = 70;
+  const spendScores = (attribute, points) => {
+    let existingAttributeScores = 0;
+    for (const property in attributeScores) {
+      existingAttributeScores += attributeScores[property];
+    }
+
+    if (points > 0 && MAX_POINTS === existingAttributeScores) {
+      alert("REACHED MAXIMUN ATTRIBUTE SCORES");
+      return null;
+    }
+
     setAttributeScores({
       ...attributeScores,
       [attribute]: attributeScores[attribute] + points,
@@ -137,8 +153,8 @@ const AttributeScores = ({
                 </Table.Cell>
                 <Table.Cell>{attributeScores[attribute]}</Table.Cell>
                 <Table.Cell className="flex">
-                  <Button onClick={() => spendPoints(attribute, 1)}>+</Button>
-                  <Button onClick={() => spendPoints(attribute, -1)}>-</Button>
+                  <Button onClick={() => spendScores(attribute, 1)}>+</Button>
+                  <Button onClick={() => spendScores(attribute, -1)}>-</Button>
                 </Table.Cell>
                 <Table.Cell>{getAttributeModifier(attribute)}</Table.Cell>
               </Table.Row>
