@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Table, Modal, Button } from "flowbite-react";
+import { Table, Modal, Button, Card, TextInput } from "flowbite-react";
 
 import "./App.css";
 import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from "./consts.js";
 
 function App() {
+  const [characterName, setCharacterName] = useState("");
   const [attributeScores, setAttributeScores] = useState({
     Strength: 0,
     Dexterity: 0,
@@ -13,9 +14,50 @@ function App() {
     Wisdom: 0,
     Charisma: 0,
   });
+  const getDefaultSkillPoints = () => {
+    const obj = {};
+    for (const item of SKILL_LIST) {
+      obj[item.name] = 0;
+    }
+
+    return obj;
+  };
+  const [skillPoints, setSkillPoints] = useState({
+    ...getDefaultSkillPoints(),
+  });
 
   const getAttributeModifier = (attribute) => {
     return Math.floor((attributeScores[attribute] - 10) / 2);
+  };
+
+  const saveCharacter = async (event) => {
+    event.preventDefault();
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        characterName: characterName,
+        attributeScores,
+        skillPoints,
+      }),
+    };
+    const response = await fetch(
+      "https://recruiting.verylongdomaintotestwith.ca/api/{semharghide}/character",
+      requestOptions
+    );
+    const data = await response.json();
+    console.log("THIS IS THE DATA", data);
+  };
+
+  const getCharacter = async (event) => {
+    const response = await fetch(
+      "https://recruiting.verylongdomaintotestwith.ca/api/{semharghide}/character"
+    );
+    const data = await response.json();
+    setAttributeScores(data.body.attributeScores);
+    setSkillPoints(data.body.skillPoints);
+
+    console.log("THIS IS THE DATA", data);
   };
 
   return (
@@ -23,6 +65,27 @@ function App() {
       <header className="App-header">
         <h1>React Coding Exercise</h1>
       </header>
+      <div className="flex pt-10 pb-3">
+        <Button onClick={(event) => saveCharacter(event)}>
+          Save character
+        </Button>
+
+        <TextInput
+          id="saveCharacter"
+          type="text"
+          placeholder="Character name"
+          required={true}
+          onChange={(event) => {
+            setCharacterName(event.target.value);
+          }}
+        />
+      </div>
+      <div className="flex">
+        <Button onClick={(event) => getCharacter(event)}>Get character</Button>
+      </div>
+      <Card href="#">
+        <h1 className="text-2xl font-bold text-white">{characterName}</h1>
+      </Card>
       <div className="flex py-10">
         <AttributeScores
           attributeScores={attributeScores}
@@ -30,7 +93,11 @@ function App() {
           getAttributeModifier={getAttributeModifier}
         />
         <Classes attributeScores={attributeScores} />
-        <Skills getAttributeModifier={getAttributeModifier} />
+        <Skills
+          getAttributeModifier={getAttributeModifier}
+          skillPoints={skillPoints}
+          setSkillPoints={setSkillPoints}
+        />
       </div>
     </div>
   );
@@ -156,16 +223,7 @@ const ClassItem = ({ classFieldName, attributeScores }) => {
   );
 };
 
-const Skills = ({ getAttributeModifier }) => {
-  const getDefault = () => {
-    const obj = {};
-    for (const item of SKILL_LIST) {
-      obj[item.name] = 0;
-    }
-
-    return obj;
-  };
-  const [skillPoints, setSkillPoints] = useState({ ...getDefault() });
+const Skills = ({ getAttributeModifier, skillPoints, setSkillPoints }) => {
   let pointsAvailable = 10 + 4 * getAttributeModifier("Intelligence");
   if (pointsAvailable < 0) pointsAvailable = 0;
 
@@ -191,11 +249,12 @@ const Skills = ({ getAttributeModifier }) => {
   };
 
   const getSkillTotalValue = (skill) => {
-    const spentAndModifier = skillPoints[skill.name] + getAttributeModifier(skill.attributeModifier)
+    const spentAndModifier =
+      skillPoints[skill.name] + getAttributeModifier(skill.attributeModifier);
     if (spentAndModifier < 0) {
-      return 0
+      return 0;
     }
-    return spentAndModifier
+    return spentAndModifier;
   };
 
   return (
@@ -227,9 +286,7 @@ const Skills = ({ getAttributeModifier }) => {
               <Table.Cell>{`${skill.attributeModifier} ${getAttributeModifier(
                 skill.attributeModifier
               )}`}</Table.Cell>
-              <Table.Cell>
-                {getSkillTotalValue(skill)}
-              </Table.Cell>
+              <Table.Cell>{getSkillTotalValue(skill)}</Table.Cell>
             </Table.Row>
           );
         })}
