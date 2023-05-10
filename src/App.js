@@ -36,7 +36,7 @@ const AttributeScores = ({
   getAttributeModifier,
 }) => {
 
-  const spendPoints = async (attribute, points) => {
+  const spendPoints = (attribute, points) => {
     setAttributeScores({
       ...attributeScores,
       [attribute]: attributeScores[attribute] + points,
